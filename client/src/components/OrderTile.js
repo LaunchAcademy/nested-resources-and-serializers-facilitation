@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 
 const OrderTile = ({ id, name, createdAt }) => {
   const created = new Date(createdAt)
-  // this can/should be handled on the backend, especially since it's used in multiple places
   
   return (
     <div className="cell small-11 grid-x grid-margin-x callout">

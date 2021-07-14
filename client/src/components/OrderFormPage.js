@@ -4,6 +4,7 @@ import { Link, Redirect } from "react-router-dom"
 import DonutOption from "./DonutOption"
 import ErrorList from "./ErrorList"
 import translateServerErrors from "../services/translateServerErrors"
+import useDonutOptions from "../hooks/useDonutOptions"
 
 const OrderFormPage = (props) => {
   // error and redirect handling
@@ -21,7 +22,7 @@ const OrderFormPage = (props) => {
   }
 
   const [donuts, setDonuts] = useState([{}])
-
+  // retrieving donut flavors for selection
   const getDonutFlavors = async () => {
     try {
       const response = await fetch("/api/v1/donuts")
@@ -42,15 +43,15 @@ const OrderFormPage = (props) => {
   }, [])
 
   const [orderDonuts, setOrderDonuts] = useState([])
-
+  // choosing a donut flavor & quantity
   const handleDonutQuantity = (event) => {
     // update the quantity of donuts if we've already added the donut flavor to the order
     const checkIfDonutIsInOrder = orderDonuts.find((donut) => donut.donutId == event.currentTarget.id)
 
     if (checkIfDonutIsInOrder) {
       const newSetOfDonuts = [...orderDonuts]
-      const donutToUpdateIndex = updateExistingDonut.findIndex((donut) => donut.donutId == event.currentTarget.id)
-
+      const donutToUpdateIndex = orderDonuts.findIndex((donut) => donut.donutId == event.currentTarget.id)
+      // update the existing quantity if the user has already selected a donut
       if (event.currentTarget.value > 0) {
         newSetOfDonuts[donutToUpdateIndex] = {
           ...newSetOfDonuts[donutToUpdateIndex],
@@ -76,6 +77,7 @@ const OrderFormPage = (props) => {
     }
   }
 
+  // update the displated donuts for selection if their quantity has been selected, then render each donut flavor option
   const donutOptions = donuts.map((option) => {
     let optionQuantity = "" 
     const newOrderDonut = orderDonuts.find((donut) => donut.donutId === option.id)
@@ -93,6 +95,7 @@ const OrderFormPage = (props) => {
     )
   })
 
+
   // order summary logic and elements
   let orderFor
   if (orderName) {
@@ -101,6 +104,7 @@ const OrderFormPage = (props) => {
     )
   }
 
+  // summary of selected donuts on the right hand side of the screen
   const donutSummary = orderDonuts.map((donut) => { 
     return (
       <li key={donut.donutId}>

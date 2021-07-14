@@ -9,12 +9,14 @@ import OrderFormPage from "./OrderFormPage"
 import OrderShowPage from "./OrderShowPage"
 
 const App = (props) => {
+
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/">
           <Redirect to="/orders" />
         </Route>
+
         <Route exact path="/orders" component={OrdersListPage} />
         <Route exact path="/orders/new" component={OrderFormPage} />
         <Route exact path="/orders/:id" component={OrderShowPage} />
