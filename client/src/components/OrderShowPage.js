@@ -35,8 +35,8 @@ const OrderShowPage = (props) => {
       />)
   })
 
-  const created = new Date(order.createdAt)
   // this can/should be handled on the backend, especially since it's used in multiple places
+  const created = new Date(order.createdAt)
 
   return (
     <div className="grid-container">

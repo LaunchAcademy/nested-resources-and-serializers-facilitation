@@ -5,6 +5,7 @@ class DonutSerializer {
     for (const attribute of allowedAttributes) {
       serializedDonut[attribute] = donut[attribute]
     }
+    console.log(serializedDonut)
     return serializedDonut
   }
 }

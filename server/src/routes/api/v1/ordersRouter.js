@@ -11,8 +11,12 @@ const ordersRouter = new express.Router()
 
 ordersRouter.get("/", async (req, res) => {
   try {
+    // retrieve the order records and order by createdAt
     const orders = await Order.query().orderBy("createdAt")
+    
+    // for every order record, ensure that only the info we want is in the orders we return in the response
     const serializedOrders = orders.map(order => OrderSerializer.getSummary(order))
+
     return res.status(200).json({ orders: serializedOrders })
   } catch (error) {
     return res.status(500).json({ errors: error })
@@ -37,10 +41,13 @@ ordersRouter.post("/", async (req, res) => {
   const { name, donuts } = cleanedFormInput
   try {
     if (donuts) {
+      // first persist the order
       const newOrder = await Order.query().insertAndFetch({ name })
+      // then persist the related orders
       for (const donut of donuts) {
         await newOrder.$relatedQuery("orderDetails").insert({ donutId: donut.donutId, quantity: donut.quantity })
       }
+      // we could serialize this object if we wanted to!
       return res.status(201).json({ order: newOrder })
     } else {
       const donutError = {
@@ -58,7 +65,7 @@ ordersRouter.post("/", async (req, res) => {
   }
 })
 
-// starting implementation
+// starting implementation (backup)
 
 // ordersRouter.get("/:id", async (req, res) => {
 //   const { id } = req.params
@@ -83,32 +90,32 @@ ordersRouter.post("/", async (req, res) => {
 
 // Refactored with insertGraph
 
-// ordersRouter.post("/", async (req, res) => {
-//   const cleanedFormInput = cleanUserInput(req.body)
-//   const { name, donuts } = cleanedFormInput
-//   try {
-//     if (donuts) {
-//       const newOrder = await Order.query().insertAndFetch({ name })
-//       await newOrder.$relatedQuery("orderDetails").insertGraph(donuts)
+ordersRouter.post("/", async (req, res) => {
+  const cleanedFormInput = cleanUserInput(req.body)
+  const { name, donuts } = cleanedFormInput
+  try {
+    if (donuts) {
+      const newOrder = await Order.query().insertAndFetch({ name })
+      await newOrder.$relatedQuery("orderDetails").insertGraph(donuts)
     
-//       return res.status(201).json({ order: newOrder })
-//     } else {
-//       const donutError = {
-//         donuts: [{
-//           message: "should be selected"
-//         }]
-//       }
-//       return res.status(422).json({ errors: donutError })
-//     }
-//   } catch (error) {
-//     if (error instanceof ValidationError) {
-//       return res.status(422).json({ errors: error.data })
-//     }
-//     return res.status(500).json({ errors: error })
-//   }
-// })
+      return res.status(201).json({ order: newOrder })
+    } else {
+      const donutError = {
+        donuts: [{
+          message: "should be selected"
+        }]
+      }
+      return res.status(422).json({ errors: donutError })
+    }
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(422).json({ errors: error.data })
+    }
+    return res.status(500).json({ errors: error })
+  }
+})
 
-// Refactored with a POJO
+// Refactored with helper function + insertgraph
 
 ordersRouter.post("/", async (req, res) => {
   const cleanedFormInput = cleanUserInput(req.body)

@@ -13,7 +13,7 @@ const DonutOption = ({ id, flavor, optionQuantity, handleDonutQuantity }) => {
           type="radio"
           name={flavor}
           value={quantity}
-          checked={optionQuantity == quantity} 
+          checked={optionQuantity == quantity}
           onChange={handleDonutQuantity}
         />
       </div>

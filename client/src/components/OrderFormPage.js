@@ -21,7 +21,8 @@ const OrderFormPage = (props) => {
     setOrderName(event.currentTarget.value)
   }
 
-  const [donuts, setDonuts] = useState([{}])
+  const [donuts, setDonuts] = useState([])
+
   // retrieving donut flavors for selection
   const getDonutFlavors = async () => {
     try {
@@ -43,6 +44,7 @@ const OrderFormPage = (props) => {
   }, [])
 
   const [orderDonuts, setOrderDonuts] = useState([])
+  console.log(orderDonuts)
   // choosing a donut flavor & quantity
   const handleDonutQuantity = (event) => {
     // update the quantity of donuts if we've already added the donut flavor to the order
