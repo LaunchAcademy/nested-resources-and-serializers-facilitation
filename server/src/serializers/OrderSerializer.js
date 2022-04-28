@@ -12,6 +12,9 @@ class OrderSerializer {
     return serializedOrder
   }
 
+
+
+
   static async getOrderSummaryWithDonuts(order){
     // designate the attributes we want in our json response
     const allowedAttributes = ["id", "name", "createdAt"]
@@ -20,7 +23,6 @@ class OrderSerializer {
     for (const attribute of allowedAttributes) {
       serializedOrder[attribute] = order[attribute]
     }
-    console.log(serializedOrder)
    
     // retrieve and serialize the order details (as well as the order flavors)
     const orderDetails = await order.$relatedQuery("orderDetails")

@@ -7,8 +7,6 @@ class OrderDetailsSerializer {
     for (const attribute of allowedAttributes) {
       serializedOrderDetail[attribute] = orderDetail[attribute]
     }
-    console.log(serializedOrderDetail)
-
     // because we make a relatedQuery right here, we need to make this function async
     const relatedDonut = await orderDetail.$relatedQuery("donut")
 

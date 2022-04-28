@@ -23,6 +23,9 @@ ordersRouter.get("/", async (req, res) => {
   }
 })
 
+
+
+
 ordersRouter.get("/:id", async (req, res) => {
   const { id } = req.params
   try {
@@ -35,6 +38,10 @@ ordersRouter.get("/:id", async (req, res) => {
     return res.status(500).json({ errors: error })
   }
 })
+
+
+
+
 
 ordersRouter.post("/", async (req, res) => {
   const cleanedFormInput = cleanUserInput(req.body)
@@ -64,29 +71,6 @@ ordersRouter.post("/", async (req, res) => {
     return res.status(500).json({ errors: error })
   }
 })
-
-// starting implementation (backup)
-
-// ordersRouter.get("/:id", async (req, res) => {
-//   const { id } = req.params
-//   try {
-//     const order = await Order.query().findById(id)
-//     order.details = await order.$relatedQuery("orderDetails").withGraphFetched("donut")
-//     // order.details = await order.$relatedQuery("orderDetails")
-//       // for (const detail of order.details) {
-//       //   detail.donut = await detail.$relatedQuery("donut")
-//       // }
-
-//     let total = order.details.reduce((prev, curr) => { return prev + curr.quantity }, 0)
-
-//     order.total = total
-//     return res.status(200).json({ order: order })
-//   } catch (error) {
-//     console.log(error)
-//     return res.status(500).json({ errors: error })
-//   }
-// })
-
 
 // Refactored with insertGraph
 

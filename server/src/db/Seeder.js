@@ -35,6 +35,9 @@ class Seeder {
     await yusef.$relatedQuery("orderDetails").insert({ quantity: 2, donutId: glazed.id })
     await yusef.$relatedQuery("orderDetails").insert({ quantity: 3, donutId: jelly.id })
     
+
+
+    // NOT FOR SEEDING JUST FOR EXAMPLES OF withGraphFetched
     // View Customer's Order
     const hansonOrder = await hanson.$relatedQuery("orderDetails").withGraphFetched("donut")
     // orderDetails stores the quantity for each selected donut

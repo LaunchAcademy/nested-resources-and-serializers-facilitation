@@ -4,7 +4,6 @@ import { Link, Redirect } from "react-router-dom"
 import DonutOption from "./DonutOption"
 import ErrorList from "./ErrorList"
 import translateServerErrors from "../services/translateServerErrors"
-import useDonutOptions from "../hooks/useDonutOptions"
 
 const OrderFormPage = (props) => {
   // error and redirect handling
@@ -21,6 +20,7 @@ const OrderFormPage = (props) => {
     setOrderName(event.currentTarget.value)
   }
 
+  // donut flavors displayed in the form
   const [donuts, setDonuts] = useState([])
 
   // retrieving donut flavors for selection
@@ -43,17 +43,20 @@ const OrderFormPage = (props) => {
     getDonutFlavors()
   }, [])
 
+  // state that tracks the actual donuts we add to an order
   const [orderDonuts, setOrderDonuts] = useState([])
-  console.log(orderDonuts)
-  // choosing a donut flavor & quantity
+
+  // choosing a donut flavor & quantity. Three different scenarios: a) if the donut is already in the order, update the quantity b) if already in the order and we want to remove the donut c) add the donut to the order if not present 
   const handleDonutQuantity = (event) => {
     // update the quantity of donuts if we've already added the donut flavor to the order
     const checkIfDonutIsInOrder = orderDonuts.find((donut) => donut.donutId == event.currentTarget.id)
 
+    // first, check if the user already added this donut to the order
     if (checkIfDonutIsInOrder) {
+      // if so, grab the donut order entry 
       const newSetOfDonuts = [...orderDonuts]
       const donutToUpdateIndex = orderDonuts.findIndex((donut) => donut.donutId == event.currentTarget.id)
-      // update the existing quantity if the user has already selected a donut
+      // update the existing quantity of the order if the user has already selected a donut
       if (event.currentTarget.value > 0) {
         newSetOfDonuts[donutToUpdateIndex] = {
           ...newSetOfDonuts[donutToUpdateIndex],
@@ -79,10 +82,11 @@ const OrderFormPage = (props) => {
     }
   }
 
-  // update the displated donuts for selection if their quantity has been selected, then render each donut flavor option
+  // update the displayed donuts for selection if their quantity has been selected, then render each donut flavor option
   const donutOptions = donuts.map((option) => {
     let optionQuantity = "" 
     const newOrderDonut = orderDonuts.find((donut) => donut.donutId === option.id)
+    // grab the quantity so that we know which radio button  to fill in
     if (newOrderDonut) {
       optionQuantity = newOrderDonut.quantity
     }
