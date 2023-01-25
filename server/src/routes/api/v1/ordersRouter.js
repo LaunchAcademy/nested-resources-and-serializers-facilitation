@@ -25,8 +25,6 @@ ordersRouter.get("/", async (req, res) => {
 })
 
 
-
-
 ordersRouter.get("/:id", async (req, res) => {
   const { id } = req.params
   try {
@@ -35,17 +33,13 @@ ordersRouter.get("/:id", async (req, res) => {
 
     // serialize the order, and get all related donut information while you are at it!
     const serializedOrder = await OrderSerializer.getOrderSummaryWithDonuts(order)
-
+    
     return res.status(200).json({ order: serializedOrder })
   } catch (error) {
     console.log(error)
     return res.status(500).json({ errors: error })
   }
 })
-
-
-
-
 
 
 
@@ -88,10 +82,18 @@ ordersRouter.post("/", async (req, res) => {
 // ordersRouter.post("/", async (req, res) => {
 //   const cleanedFormInput = cleanUserInput(req.body)
 //   const { name, donuts } = cleanedFormInput
+
+//   const cleanedDonuts = donuts.map(donutObject => {
+//     return { donutId: donutObject.donutId, quantity: donutObject.quantity }
+//   })
+
+//   console.log(cleanedDonuts)
+
 //   try {
 //     if (donuts) {
 //       const newOrder = await Order.query().insertAndFetch({ name })
-//       await newOrder.$relatedQuery("orderDetails").insertGraph(donuts)
+
+//       await newOrder.$relatedQuery("orderDetails").insertGraph(cleanedDonuts)
     
 //       return res.status(201).json({ order: newOrder })
 //     } else {
@@ -103,6 +105,7 @@ ordersRouter.post("/", async (req, res) => {
 //       return res.status(422).json({ errors: donutError })
 //     }
 //   } catch (error) {
+//     console.log(error)
 //     if (error instanceof ValidationError) {
 //       return res.status(422).json({ errors: error.data })
 //     }
@@ -114,6 +117,7 @@ ordersRouter.post("/", async (req, res) => {
 
 // ordersRouter.post("/", async (req, res) => {
 //   const cleanedFormInput = cleanUserInput(req.body)
+  
 //   try {
 //     const result = await insertDonutOrder(cleanedFormInput) // this is new
 //     if (result.order) {

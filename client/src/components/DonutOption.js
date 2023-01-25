@@ -2,6 +2,7 @@ import React from "react"
 
 const DonutOption = ({ id, flavor, optionQuantity, handleDonutQuantity }) => {
   const quantities = [0, 1, 2, 3]
+  
   const quantityOptions = quantities.map((quantity) => {
     return (
       <div key={`${id}-${quantity}`} className="cell small-3">
