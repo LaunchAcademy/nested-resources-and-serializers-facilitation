@@ -46,6 +46,8 @@ const OrderFormPage = (props) => {
   // state that tracks the actual donuts we add to an order
   const [orderDonuts, setOrderDonuts] = useState([])
 
+  // SKIP DOWN TO DONUT OPTIONS
+
   // choosing a donut flavor & quantity. Three different scenarios: a) if the donut is already in the order, update the quantity b) if already in the order and we want to remove the donut c) add the donut to the order if not present 
   const handleDonutQuantity = (event) => {
     // update the quantity of donuts if we've already added the donut flavor to the order

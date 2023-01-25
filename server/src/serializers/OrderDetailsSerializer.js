@@ -1,6 +1,8 @@
 import DonutSerializer from "./DonutSerializer.js"
 
 class OrderDetailsSerializer {
+
+  // because an OrderDetail is a join, if we want to know what donut was actually ordered, we have to make another query
   static async getSummary(orderDetail) {
     const allowedAttributes = ["id", "quantity"]
     let serializedOrderDetail = {}

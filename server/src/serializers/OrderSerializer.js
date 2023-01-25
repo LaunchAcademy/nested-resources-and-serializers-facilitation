@@ -23,9 +23,16 @@ class OrderSerializer {
     for (const attribute of allowedAttributes) {
       serializedOrder[attribute] = order[attribute]
     }
+
+
+    // -----------
    
     // retrieve and serialize the order details (as well as the order flavors)
     const orderDetails = await order.$relatedQuery("orderDetails")
+
+    console.log(orderDetails)
+
+
     // OrderDetailsSerializer will be called on each orderDetails
     // because OrderDetailsSerializer ALSO makes an Objection query, `getSummary` is async and must be awaited.
     // we are calling OrderDetailsSerializer.getSummary numerous times, which means we have to await multiple promises all resolving before moving on

@@ -19,7 +19,7 @@
   "version": "0.0.1",
   "name": "nested-forms-with-express-and-objection-server",
   "engines": {
-    "node": "^14.15"
+    "node": "^16.18"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
