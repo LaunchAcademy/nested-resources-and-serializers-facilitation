@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
+// import getOrder from "./../apiClient/getOrder.js"
+import ApiClient from "../apiClient/apiClient"
 
 import OrderDetailTile from "./OrderDetailTile"
 
@@ -9,23 +11,12 @@ const OrderShowPage = (props) => {
 
   const orderId = props.match.params.id
 
-  const getOrder = async () => {
-    try {
-      const response = await fetch(`/api/v1/orders/${orderId}`)
-      if (!response.ok) {
-        const errorMessage = `${response.status} (${response.statusText})`
-        const error = new Error(errorMessage)
-        throw error
-      }
-      const orderData = await response.json()
-      setOrder(orderData.order)
-    } catch (error) {
-      console.error(`Error in fetch: ${error.message}`)
-    }
-  }
-
   useEffect(() => {
-    getOrder()
+
+    ApiClient.getOrder(orderId).then((orderData) => {
+      setOrder(orderData.order)
+    })
+
   }, [])
 
   const detailTileComponents = order.details.map((detailObject) => {

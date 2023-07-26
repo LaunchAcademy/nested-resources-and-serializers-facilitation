@@ -54,6 +54,27 @@ ordersRouter.post("/", async (req, res) => {
       // Note: technically, we could make a "transaction" here to ensure both queries go through
 
       // first persist the order
+
+
+      const trx = await Order.startTransaction();
+
+      try {
+
+        const newOrder = await Order.query(trx).insertAndFetch({ name })
+
+        for (const donut of donuts) {
+          await newOrder.$relatedQuery("orderDetails", trx).insert({ donutId: donut.donutId, quantity: donut.quantity })
+        }
+        
+        await trx.commit();
+      } catch (err) {
+        await trx.rollback();
+        throw err;
+      }
+
+
+
+
       const newOrder = await Order.query().insertAndFetch({ name })
       // then persist the related orders
       for (const donut of donuts) {
@@ -79,58 +100,64 @@ ordersRouter.post("/", async (req, res) => {
 
 // Refactored with insertGraph
 
-// ordersRouter.post("/", async (req, res) => {
-//   const cleanedFormInput = cleanUserInput(req.body)
-//   const { name, donuts } = cleanedFormInput
+ordersRouter.post("/", async (req, res) => {
+  const cleanedFormInput = cleanUserInput(req.body)
+  const { name, donuts } = cleanedFormInput
 
-//   const cleanedDonuts = donuts.map(donutObject => {
-//     return { donutId: donutObject.donutId, quantity: donutObject.quantity }
-//   })
+  const cleanedDonuts = donuts.map(donutObject => {
+    return { donutId: donutObject.donutId, quantity: donutObject.quantity }
+  })
 
-//   console.log(cleanedDonuts)
+  console.log(cleanedDonuts)
 
-//   try {
-//     if (donuts) {
-//       const newOrder = await Order.query().insertAndFetch({ name })
+  try {
+    if (donuts) {
+      const newOrder = await Order.query().insertAndFetch({ name })
 
-//       await newOrder.$relatedQuery("orderDetails").insertGraph(cleanedDonuts)
+      // await Order.query().insertGraph({
+      //   { name },
+      //   orderDetails: cleanedDonuts
+      // })
+
+      await newOrder.$relatedQuery("orderDetails").insertGraph(cleanedDonuts)
     
-//       return res.status(201).json({ order: newOrder })
-//     } else {
-//       const donutError = {
-//         donuts: [{
-//           message: "should be selected"
-//         }]
-//       }
-//       return res.status(422).json({ errors: donutError })
-//     }
-//   } catch (error) {
-//     console.log(error)
-//     if (error instanceof ValidationError) {
-//       return res.status(422).json({ errors: error.data })
-//     }
-//     return res.status(500).json({ errors: error })
-//   }
-// })
+      return res.status(201).json({ order: newOrder })
+    } else {
+      const donutError = {
+        donuts: [{
+          message: "should be selected"
+        }]
+      }
+      return res.status(422).json({ errors: donutError })
+    }
+  } catch (error) {
+    console.log(error)
+    if (error instanceof ValidationError) {
+      return res.status(422).json({ errors: error.data })
+    }
+    return res.status(500).json({ errors: error })
+  }
+})
 
 // Refactored with helper function + insertgraph
 
-// ordersRouter.post("/", async (req, res) => {
-//   const cleanedFormInput = cleanUserInput(req.body)
+ordersRouter.post("/", async (req, res) => {
+  const cleanedFormInput = cleanUserInput(req.body)
   
-//   try {
-//     const result = await insertDonutOrder(cleanedFormInput) // this is new
-//     if (result.order) {
-//       return res.status(201).json({ order: result.order })
-//     } else if (result.errors) {
-//       return res.status(422).json({ errors: result.errors })
-//     }
-//   } catch (error) {
-//     if (error instanceof ValidationError) {
-//       return res.status(422).json({ errors: error.data })
-//     }
-//     return res.status(500).json({ errors: error })
-//   }
-// })
+  try {
+    const result = await insertDonutOrder(cleanedFormInput) // this is new
+
+    if (result.order) {
+      return res.status(201).json({ order: result.order })
+    } else if (result.errors) {
+      return res.status(422).json({ errors: result.errors })
+    }
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(422).json({ errors: error.data })
+    }
+    return res.status(500).json({ errors: error })
+  }
+})
 
 export default ordersRouter
